@@ -1,0 +1,867 @@
+#include <iostream>
+#include <string>
+#include<cmath>
+using namespace std;
+
+bool isValidOctalForConversion(string num) {
+	int dotCount = 0;
+	for (char c : num) {
+		if (c == '.') {
+			dotCount++;
+			if (dotCount > 1) {
+				return false;
+			}
+		}
+		else if (c < '0' || c > '7') {
+			return false;
+		}
+	}
+	return true;
+}
+
+bool isInteger(string n) {
+	for (char d : n) {
+		if (!isdigit(d)) {
+			return false;
+		}
+	}
+	return true;
+}
+
+bool isFloat(string num) {
+	int dotcount = 0;
+	for (char c : num) {
+		if (c == '.') {
+			dotcount++;
+		}
+		else if (!isdigit(c)) {
+			return false;
+		}
+	}
+	return dotcount == 1;
+}
+
+bool isValidHex(const string& s) {
+	if (s.empty()) return false;
+	int dotCount = 0;
+	for (char c : s) {
+		char ch = toupper(c);
+		if (ch == '.') {
+			dotCount++;
+			if (dotCount > 1) return false;
+		}
+		else if (!((ch >= '0' && ch <= '9') || (ch >= 'A' && ch <= 'F'))) {
+			return false;
+		}
+	}
+	return true;
+}
+
+bool isvalidBinary(string n) {
+	for (char c : n) {
+		if (c != '0' && c != '1' && c != '.') {
+			return false;
+		}
+	}
+	return true;
+}
+
+void DecimalToBinary(int n) {
+	if (n == 0) {
+		return;
+	}
+	DecimalToBinary(n / 2);
+	cout << n % 2;
+}
+
+void FloatToBinary(float num) {
+	int integerPart = num;
+	float fractionalPart = num - integerPart;
+	cout << "Number in Binary : ";
+	if (integerPart == 0) {
+		cout << "0";
+	}
+	else {
+		DecimalToBinary(integerPart);
+	}
+	if (fractionalPart > 0) {
+		cout << ".";
+		int precision = 4;
+		while (precision--) {
+			fractionalPart *= 2;
+			int bit = fractionalPart;
+			cout << bit;
+			fractionalPart -= bit;
+			if (fractionalPart == 0) break;
+		}
+	}
+	cout << endl;
+}
+
+void DecimalToOctal(int b) {
+	if (b < 8) {
+		cout << b;
+		return;
+	}
+	DecimalToOctal(b / 8);
+	cout << b % 8;
+}
+
+void FloatToOctal(float n) {
+	int integerPart = n;
+	float fractionPart = n - integerPart;
+	cout << "Number in Octal : ";
+	if (integerPart == 0) {
+		cout << "0";
+	}
+	else {
+		DecimalToOctal(integerPart);
+	}
+	if (fractionPart > 0) {
+		cout << ".";
+		int precise = 4;
+		while (precise--) {
+			fractionPart *= 8;
+			int bit = fractionPart;
+			cout << bit;
+			fractionPart -= bit;
+			if (fractionPart == 0) {
+				break;
+			}
+		}
+	}
+	cout << endl;
+}
+
+string DecimalToHexadecimal(int n) {
+	if (n == 0) {
+		return "0";
+	}
+	string hex = "";
+	while (n > 0) {
+		int remainder = n % 16;
+		if (remainder < 10) {
+			hex = char(remainder + '0') + hex;
+		}
+		else {
+			hex = char(remainder - 10 + 'A') + hex;
+		}
+		n /= 16;
+	}
+	return hex;
+}
+
+void FloatToHexadecimal(float num) {
+	int integerPart = num;
+	float fractionPart = num - integerPart;
+	cout << "Number in Hexa-Decimal : ";
+	if (integerPart != 0) {
+		cout << DecimalToHexadecimal(integerPart);
+	}
+	else {
+		cout << "0";
+	}
+	if (fractionPart > 0) {
+		cout << ".";
+		int precision = 4;
+		while (precision--) {
+			fractionPart *= 16;
+			int bit = fractionPart;
+			if (bit < 10) {
+				cout << bit;
+			}
+			else {
+				cout << char(bit - 10 + 'A');
+			}
+			fractionPart -= bit;
+			if (fractionPart == 0) {
+				break;
+			}
+		}
+		cout << endl;
+	}
+}
+
+int BinaryToDecimal(string n) {
+	int decimal = 0;
+	int power = 0;
+	for (int i = n.length() - 1; i >= 0; i--) {
+		if (n[i] == '1') {
+			decimal += pow(2, power);
+		}
+		power++;
+	}
+	return decimal;
+}
+
+double FloatBinaryToDecimal(string p) {
+	size_t point = p.find(".");
+	int intPart = BinaryToDecimal(p.substr(0, point));
+	float fraction = 0.0;
+	if (point != string::npos) {
+		float weight = 0.5;
+		for (size_t i = point + 1; i < p.length(); i++) {
+			if (p[i] == '1') {
+				fraction += weight;
+			}
+			weight /= 2;
+		}
+	}
+	return intPart + fraction;
+}
+
+int OctalToDecimal(string n) {
+	int decimal = 0;
+	int power = 0;
+	for (int i = n.length() - 1; i >= 0; i--) {
+		decimal += (n[i] - '0') * pow(8, power);
+		power++;
+	}
+	return decimal;
+}
+
+double FloatOctalToDecimal(string n) {
+	size_t point = n.find('.');
+	int intPart = OctalToDecimal(n.substr(0, point));
+	double fraction = 0.0;
+	if (point != string::npos) {
+		double weight = 1.0 / 8;
+		for (size_t i = point + 1; i < n.length(); i++) {
+			fraction += (n[i] - '0') * weight;
+			weight /= 8;
+		}
+	}
+	return intPart + fraction;
+}
+
+int HexToDecimal(string n) {
+	int decimal = 0;
+	int power = 0;
+	for (int i = n.length() - 1; i >= 0; i--) {
+		char ch = toupper(n[i]);
+		int value;
+		if (ch >= '0' && ch <= '9') {
+			value = ch - '0';
+		}
+		else if (ch >= 'A' && ch <= 'F') {
+			value = ch - 'A' + 10;
+		}
+		else {
+			return -1;
+		}
+		decimal += value * pow(16, power);
+		power++;
+	}
+	return decimal;
+}
+
+double FloatHexToDecimal(string n) {
+	size_t point = n.find('.');
+	int intPart = HexToDecimal(n.substr(0, point));
+	double fraction = 0.0;
+	if (point != string::npos) {
+		double weight = 1.0 / 16;
+		for (size_t i = point + 1; i < n.length(); i++) {
+			char ch = toupper(n[i]);
+			int value;
+			if (ch >= '0' && ch <= '9') {
+				value = ch - '0';
+			}
+			else if (ch >= 'A' && ch <= 'F') {
+				value = ch - 'A' + 10;
+			}
+			else {
+				return -1;
+			}
+
+			fraction += value * weight;
+			weight /= 16;
+		}
+	}
+	return intPart + fraction;
+}
+
+string BinaryToOctal(string n) {
+	int num = 0;
+	int power = 0;
+	for (int i = n.length() - 1; i >= 0; i--) {
+		if (n[i] == '1') {
+			num += pow(2, power);
+		}
+		power++;
+	}
+	string octal = "";
+	while (num > 0) {
+		octal = to_string(num % 8) + octal;
+		num /= 8;
+	}
+	return (octal.empty()) ? "0" : octal;
+}
+
+string FloatBinarytoOctal(string n) {
+	size_t point = n.find('.');
+	string integerPart = n.substr(0, point);
+	string floatPart = point != string::npos ? n.substr(point + 1) : "";
+	string octalInt = BinaryToOctal(integerPart);
+	float fraction = 0.0;
+	float weight = 0.5;
+	for (int i = 0; i < floatPart.length(); i++) {
+		if (floatPart[i] == '1') {
+			fraction += weight;
+		}
+		weight /= 2;
+	}
+	string octalFrac = "";
+	int precision = 4;
+	while (precision--) {
+		fraction *= 8;
+		int bit = int(fraction);
+		octalFrac += to_string(bit);
+		fraction -= bit;
+		if (fraction == 0) {
+			break;
+		}
+	}
+	return octalInt + "." + octalFrac;
+}
+
+string BinaryToHexa(string n) {
+	int num = 0;
+	int power = 0;
+	for (int i = n.length() - 1; i >= 0; i--) {
+		if (n[i] == '1') {
+			num += pow(2, power);
+		}
+		power++;
+	}
+	string hexa = "";
+	while (num > 0) {
+		hexa = to_string(num % 16) + hexa;
+		num /= 16;
+	}
+	return (hexa.empty()) ? "0" : hexa;
+}
+
+string FloatBinaryToHexa(string n) {
+	size_t point = n.find('.');
+	string integerPart = n.substr(0, point);
+	string floatPart = point != string::npos ? n.substr(point + 1) : " ";
+	string hexaInt = BinaryToHexa(integerPart);
+	float fraction = 0.0;
+	float weight = 0.5;
+	for (int i = 0; i < floatPart.length(); i++) {
+		if (floatPart[i] == '1') {
+			fraction += weight;
+		}
+		weight /= 2;
+	}
+	string hexaFrac = "";
+	int precision = 4;
+	while (precision--) {
+		fraction *= 16;
+		int bit = int(fraction);
+		hexaFrac += to_string(bit);
+		fraction -= bit;
+		if (fraction == 0) {
+			break;
+		}
+	}
+	return hexaInt + "." + hexaFrac;
+}
+
+string HexToBinaryInt(const string& hex) {
+	int decimal = HexToDecimal(hex);
+	if (decimal == 0) return "0";
+	string binary = "";
+	while (decimal > 0) {
+		binary = (decimal % 2 == 0 ? "0" : "1") + binary;
+		decimal /= 2;
+	}
+	return binary;
+}
+
+string FloatHexToBinary(const string& hex) {
+	size_t point = hex.find('.');
+	string intPart = (point == string::npos) ? hex : hex.substr(0, point);
+	string fracPart = (point == string::npos) ? "" : hex.substr(point + 1);
+	string binaryInt = HexToBinaryInt(intPart);
+	double fraction = 0.0;
+	double weight = 1.0 / 16;
+	for (char c : fracPart) {
+		int value;
+		if (c >= '0' && c <= '9') value = c - '0';
+		else value = toupper(c) - 'A' + 10;
+		fraction += value * weight;
+		weight /= 16;
+	}
+	string binaryFrac = "";
+	int precision = 4;
+	while (precision--) {
+		fraction *= 2;
+		int bit = (int)fraction;
+		binaryFrac += (bit == 1) ? '1' : '0';
+		fraction -= bit;
+		if (fraction == 0) break;
+	}
+	if (binaryFrac.empty()) return binaryInt;
+	return binaryInt + "." + binaryFrac;
+}
+
+string HexToOctalInt(const string& hex) {
+	int decimal = HexToDecimal(hex);
+	if (decimal == 0) return "0";
+	string octal = "";
+	while (decimal > 0) {
+		octal = to_string(decimal % 8) + octal;
+		decimal /= 8;
+	}
+	return octal;
+}
+
+string FloatHexToOctal(const string& hex) {
+	size_t point = hex.find('.');
+	string intPart = (point == string::npos) ? hex : hex.substr(0, point);
+	string fracPart = (point == string::npos) ? "" : hex.substr(point + 1);
+	string octalInt = HexToOctalInt(intPart);
+	double fraction = 0.0;
+	double weight = 1.0 / 16;
+	for (char c : fracPart) {
+		int value;
+		if (c >= '0' && c <= '9') value = c - '0';
+		else value = toupper(c) - 'A' + 10;
+		fraction += value * weight;
+		weight /= 16;
+	}
+	string octalFrac = "";
+	int precision = 4;
+	while (precision--) {
+		fraction *= 8;
+		int bit = (int)fraction;
+		octalFrac += to_string(bit);
+		fraction -= bit;
+		if (fraction == 0) break;
+	}
+	if (octalFrac.empty()) return octalInt;
+	return octalInt + "." + octalFrac;
+}
+
+string octalToHexInt(string octNum) {
+	int octal = stoi(octNum);
+	int decimal = 0, base = 1;
+	while (octal > 0) {
+		decimal += (octal % 10) * base;
+		octal /= 10;
+		base *= 8;
+	}
+	string hex = "";
+	char hexChars[] = "0123456789ABCDEF";
+	while (decimal > 0) {
+		hex = hexChars[decimal % 16] + hex;
+		decimal /= 16;
+	}
+	return hex.empty() ? "0" : hex;
+}
+
+string octalToHexFloat(string octalFloat) {
+	int dot = octalFloat.find('.');
+	string intPartStr, fracPartStr;
+	if (dot == string::npos) {
+		intPartStr = octalFloat;
+		fracPartStr = "";
+	}
+	else {
+		intPartStr = octalFloat.substr(0, dot);
+		fracPartStr = octalFloat.substr(dot + 1);
+	}
+	int intPart = stoi(intPartStr, nullptr, 8);
+	double decimal = intPart;
+	double fracBase = 1.0 / 8;
+	for (char c : fracPartStr) {
+		if (c >= '0' && c <= '7') {
+			decimal += (c - '0') * fracBase;
+			fracBase /= 8;
+		}
+	}
+	int whole = (int)decimal;
+	double frac = decimal - whole;
+	string hex = "";
+	char hexChars[] = "0123456789ABCDEF";
+	while (whole > 0) {
+		hex = hexChars[whole % 16] + hex;
+		whole /= 16;
+	}
+	hex = hex.empty() ? "0" : hex;
+	hex += ".";
+	for (int i = 0; i < 4 && frac > 0; ++i) {
+		frac *= 16;
+		int digit = (int)frac;
+		hex += hexChars[digit];
+		frac -= digit;
+	}
+	return hex;
+}
+
+string octalToBinaryInt(string octNum) {
+	int octal = stoi(octNum);
+	int decimal = 0, base = 1;
+	while (octal > 0) {
+		decimal += (octal % 10) * base;
+		octal /= 10;
+		base *= 8;
+	}
+	string binary = "";
+	while (decimal > 0) {
+		binary = char((decimal % 2) + '0') + binary;
+		decimal /= 2;
+	}
+	return binary.empty() ? "0" : binary;
+}
+
+string octalToBinaryFloat(string octalFloat) {
+	int dot = octalFloat.find('.');
+	string intPartStr = octalFloat.substr(0, dot);
+	string fracPartStr = octalFloat.substr(dot + 1);
+	int intPart = stoi(intPartStr);
+	double decimal = 0;
+	int base = 1;
+	while (intPart > 0) {
+		decimal += (intPart % 10) * base;
+		intPart /= 10;
+		base *= 8;
+	}
+	double fracBase = 1.0 / 8;
+	for (char c : fracPartStr) {
+		decimal += (c - '0') * fracBase;
+		fracBase /= 8;
+	}
+	int whole = (int)decimal;
+	double frac = decimal - whole;
+	string binary = "";
+	while (whole > 0) {
+		binary = char((whole % 2) + '0') + binary;
+		whole /= 2;
+	}
+	binary = binary.empty() ? "0" : binary;
+	binary += ".";
+	for (int i = 0; i < 4 && frac > 0; ++i) {
+		frac *= 2;
+		binary += char(int(frac) + '0');
+		frac -= int(frac);
+	}
+	return binary;
+}
+
+int main() {
+	string num;
+	int choice;
+
+	do {
+		cout << "\nWelcome! How can I assist you today?" << endl;
+		cout << "1. Conversion of Decimal to Non-Decimal." << endl;
+		cout << "2. Conversion of Non-Decimal to Decimal." << endl;
+		cout << "3. Conversion of Non-Decimal to Non-Decimal." << endl;
+		cout << "4. Exit." << endl;
+		cout << "Select from (1-4) : ";
+		cin >> choice;
+		cin.ignore();
+
+		switch (choice) {
+		case 1: {
+			int n1;
+			bool returnToMain = false;
+
+			do {
+				cout << "1. Convert Decimal to Binary." << endl;
+				cout << "2. Convert Decimal to Octal." << endl;
+				cout << "3. Convert Decimal to Hexadecimal." << endl;
+				cout << "4. Return to Main Menu." << endl;
+				cout << "Select from (1-4) : ";
+				cin >> n1;
+				cin.ignore();
+
+				switch (n1) {
+				case 1: {
+					cout << "Enter the Decimal Number to convert to Binary : ";
+					getline(cin, num);
+					if (isInteger(num)) {
+						int num1 = stoi(num);
+						cout << "Number in Binary : ";
+						DecimalToBinary(num1);
+						cout << endl;
+					}
+					else if (isFloat(num)) {
+						float f1 = stof(num);
+						FloatToBinary(f1);
+						cout << endl;
+					}
+					else {
+						cout << "Invalid input! Please enter a valid number." << endl;
+					}
+					break;
+				}
+				case 2: {
+					cout << "Enter The Decimal Number to convert to Octal : ";
+					getline(cin, num);
+					if (isValidOctalForConversion(num)) {
+						if (isInteger(num)) {
+							int num2 = stoi(num);
+							cout << "Number in Octal : ";
+							DecimalToOctal(num2);
+							cout << endl;
+
+						}
+						else if (isFloat(num)) {
+							float f2 = stof(num);
+							FloatToOctal(f2);
+							cout << endl;
+						}
+					}
+					else {
+						cout << "Invalid input! The number is not valid for Octal conversion." << endl;
+					}
+					break;
+				}
+				case 3: {
+					cout << "Enter the Decimal Number to convert to Hexa-Decimal : ";
+					getline(cin, num);
+					if (isInteger(num)) {
+						int num3 = stoi(num);
+						cout << "Number in Hexadecimal : " << DecimalToHexadecimal(num3) << endl;
+					}
+					else if (isFloat(num)) {
+						float f3 = stof(num);
+						FloatToHexadecimal(f3);
+						cout << endl;
+					}
+					break;
+				}
+				case 4: {
+					returnToMain = true;
+					break;
+				}
+				default:
+					cout << "Invalid choice. Please enter a valid option." << endl;
+					break;
+				}
+			} while (!returnToMain);
+			break;
+		}
+		case 2: {
+			int n2;
+			bool returnToMain = false;
+
+			do {
+				cout << "1. Convert Binary to Decimal." << endl;
+				cout << "2. Convert Octal to Decimal." << endl;
+				cout << "3. Convert Hexadecimal to Decimal." << endl;
+				cout << "4. Return to Main Menu." << endl;
+				cout << "Select from (1-4) : ";
+				cin >> n2;
+				cin.ignore();
+
+				switch (n2) {
+				case 1: {
+					cout << "Enter The Binary Number to convert to Decimal : ";
+					getline(cin, num);
+					if (isInteger(num)) {
+						cout << "Number in Decimal : " << BinaryToDecimal(num);
+						cout << endl;
+					}
+					else if (isFloat(num)) {
+						cout << "Number in Decimal : " << FloatBinaryToDecimal(num);
+						cout << endl;
+					}
+					else {
+						cout << "Invalid input! The number is not valid for Binary to Decimal conversion." << endl;
+					}
+					break;
+				}
+				case 2: {
+					cout << "Enter The Octal Number to convert to Decimal : ";
+					getline(cin, num);
+					if (isValidOctalForConversion(num)) {
+						if (isInteger(num)) {
+							cout << "Number in Decimal : " << OctalToDecimal(num);
+							cout << endl;
+						}
+						else if (isFloat(num)) {
+							cout << "Number in Decimal : " << FloatOctalToDecimal(num);
+							cout << endl;
+						}
+						else {
+							cout << "Enter a valid Octal Number." << endl;
+						}
+					}
+					break;
+				}
+				case 3: {
+					cout << "Enter The Hexadecimal Number to convert to Decimal: ";
+					getline(cin, num);
+
+					if (!isValidHex(num)) {
+						cout << "Invalid Hexadecimal number!" << endl;
+					}
+					else {
+						size_t point = num.find('.');
+						if (point == string::npos) {
+							cout << "Number in Decimal : " << HexToDecimal(num) << endl;
+						}
+						else {
+							cout << "Number in Decimal : " << FloatHexToDecimal(num) << endl;
+						}
+					}
+					break;
+				}
+				case 4: {
+					returnToMain = true;
+					break;
+				}
+				default:
+					cout << "Invalid choice. Please enter a valid option." << endl;
+					break;
+				}
+			} while (!returnToMain);
+			break;
+		}
+		case 3: {
+			int n3;
+			bool returnToMain = false;
+
+			do {
+				cout << "1. Convert Binary to Octal." << endl;
+				cout << "2. Convert Binary to Hexadecimal." << endl;
+				cout << "3. Convert Hexadecimal to Binary." << endl;
+				cout << "4. Convert Hexadecimal to Octal." << endl;
+				cout << "5. Convert Octal to Binary." << endl;
+				cout << "6. Convert Octal to Hexadecimal." << endl;
+				cout << "7. Return to Main Menu." << endl;
+				cout << "Select from (1-7) : ";
+				cin >> n3;
+				cin.ignore();
+				switch (n3) {
+				case 1: {
+					cout << "Enter The Binary Number to convert to Octal : ";
+					getline(cin, num);
+					if (isvalidBinary(num)) {
+						if (isInteger(num)) {
+							cout << "Number in Octal : " << BinaryToOctal(num) << endl;
+						}
+						else if (isFloat(num)) {
+							cout << "Number in Octal : " << FloatBinarytoOctal(num) << endl;
+						}
+						else {
+							cout << "Invalid Binary Number." << endl;
+						}
+					}
+					break;
+				}
+				case 2: {
+					cout << "Enter The Binary Number to convert to Hexa-Decimal : ";
+					getline(cin, num);
+					if (isvalidBinary(num)) {
+						if (isInteger(num)) {
+							cout << "Number in Hexa-Decimal : " << BinaryToHexa(num) << endl;
+						}
+						else if (isFloat(num)) {
+							cout << "Number in Hexa-decimal : " << FloatBinaryToHexa(num) << endl;
+						}
+						else {
+							cout << "Invalid Binary Number." << endl;
+						}
+					}
+					break;
+				}
+				case 3: {
+					cout << "Enter The Hexa-Decimal Number to convert to Binary : ";
+					getline(cin, num);
+					if (!isValidHex(num)) {
+						cout << "Invalid Hexadecimal Number." << endl;
+						break;
+					}
+					else {
+						size_t point = num.find('.');
+						if (point == string::npos) {
+							cout << "Number in Binary : " << HexToBinaryInt(num) << endl;
+						}
+						else {
+							cout << "Number in Binary : " << FloatHexToBinary(num) << endl;
+						}
+					}
+					break;
+				}
+				case 4: {
+					cout << "Enter The Hexa-Decimal Number to convert to Octal : ";
+					getline(cin, num);
+					if (!isValidHex(num)) {
+						cout << "Invalid Hexadecimal Number." << endl;
+						break;
+					}
+					else {
+						size_t point = num.find('.');
+						if (point == string::npos) {
+							cout << "Number in Octal : " << HexToOctalInt(num) << endl;
+						}
+						else {
+							cout << "Number in Octal : " << FloatHexToOctal(num) << endl;
+						}
+					}
+					break;
+				}
+				case 5: {
+					cout << "Enter The Octal Number to convert to Binary : ";
+					getline(cin, num);
+					if (isValidOctalForConversion(num)) {
+						if (isInteger(num)) {
+							cout << "Number in Binary : " << octalToBinaryInt(num);
+							cout << endl;
+						}
+						else if (isFloat(num)) {
+							cout << "Number in Binary : " << octalToBinaryFloat(num);
+							cout << endl;
+						}
+						else {
+							cout << "Enter a valid Octal Number." << endl;
+						}
+					}
+					break;
+				}
+				case 6: {
+					cout << "Enter The Octal Number to convert to Hexa-Decimal : ";
+					getline(cin, num);
+					if (isValidOctalForConversion(num)) {
+						if (isInteger(num)) {
+							cout << "Number in Hexa-Decimal : " << octalToHexInt(num);
+							cout << endl;
+						}
+						else if (isFloat(num)) {
+							cout << "Number in Hexa-Decimal : " << octalToHexFloat(num);
+							cout << endl;
+						}
+						else {
+							cout << "Enter a valid Octal Number." << endl;
+						}
+					}
+					break;
+				}
+				case 7: {
+					returnToMain = true;
+					break;
+				}
+				default:
+					cout << "Invalid choice. Please enter a valid option." << endl;
+					break;
+				}
+			} while (returnToMain != true);
+			break;
+		}
+		case 4: {
+			cout << "Exiting Program.." << endl;
+			break;
+		}
+		default:
+			cout << "Invalid choice. Please enter a valid option." << endl;
+			break;
+		}
+	} while (!(choice == 4));
+	return 0;
+}
